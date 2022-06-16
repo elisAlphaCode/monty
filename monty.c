@@ -1,51 +1,24 @@
-#include <stdlib.h>
-#include <string.h>
-#include <stdio.h>
 #include "monty.h"
-
+global_var var_global;
 /**
- *main - executes opcodes in a monty byte code file
- *@argc: counts the number of arguments passed to the program
- *@argv: an array of chars that stores the arguments
- *       passed to the program
- *Return: 0 on success
+ * main - driver function for monty program
+ * @ac: int num of arguments
+ * @av: opcode file
+ * Return: 0
  */
-int main(int argc, char *argv[])
+int main(int ac, char **av)
 {
-	char *line = NULL;
-	size_t size = 0;
-	char *opcode = NULL;
-	unsigned int line_number = 1;
-	FILE *fd;
-	stack_t *STACK;
+	stack_t *stack;
 
-	STACK = NULL;
-	if (argc != 2)
-		usage_error();
-
-	fd = fopen(argv[1], "r");
-	if (!fd)
-		file_error(argv[1]);
-
-	while ((getline(&line, &size, fd)) != (-1))
+	stack = NULL;
+	if (ac != 2)
 	{
-		if (*line == '\n')
-		{
-			line_number++;
-			continue;
-		}
-		opcode = strtok(line, " \t\n");
-		if (!opcode)
-		{
-			line_number++;
-			continue;
-		}
-		Arg.argument = strtok(NULL, " \t\n");
-		run_opcode(opcode, &STACK, line_number);
-		line_number++;
+		fprintf(stderr, "USAGE: monty file\n");
+		exit(EXIT_FAILURE);
 	}
-	free(line);
-	free_stack(&STACK);
-	fclose(fd);
-	exit(EXIT_SUCCESS);
+
+	read_file(av[1], &stack);
+    /* recordar liberar memorias */
+	free_dlistint(stack);
+	return (0);
 }
